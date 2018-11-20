@@ -3,6 +3,7 @@ package cespresso.gmail.com.todo.domain.service
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FirebaseAuth
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 import java.io.FileInputStream
@@ -19,5 +20,8 @@ class FireBaseAdmin {
 
     val firebaseApp = FirebaseApp.initializeApp(options)
     @Bean
-    fun getFireBaseAdmin():FirebaseApp = firebaseApp
+    fun fireBaseAdmin():FirebaseApp = firebaseApp
+
+    @Bean
+    fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance(firebaseApp)
 }
