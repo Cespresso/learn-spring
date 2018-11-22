@@ -26,7 +26,7 @@ data class FirebaseUserDetails(
     }
 
     override fun getUsername(): String {
-        accountNonExpired
+        return email
     }
 
     override fun isCredentialsNonExpired(): Boolean {

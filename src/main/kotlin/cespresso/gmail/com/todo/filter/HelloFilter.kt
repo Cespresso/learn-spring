@@ -13,23 +13,23 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.io.FileInputStream
 
 
-
-@Component
-class HelloFilter:Filter  {
-
-    @Autowired
-    lateinit var firebaseApp: FirebaseApp
-
-    val logger = Logger.getLogger(this.javaClass)
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain?) {
-        logger.info("フィルター処理前")
-        logger.info(firebaseApp.name)
-//        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-//            chain.doFilter(request, response)
-//            return
-//        }
-        chain?.doFilter(request,response)
-        logger.info("フィルター処理後")
-    }
-
-}
+//
+//@Component
+//class HelloFilter:Filter  {
+//
+//    @Autowired
+//    lateinit var firebaseApp: FirebaseApp
+//
+//    val logger = Logger.getLogger(this.javaClass)
+//    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain?) {
+//        logger.info("フィルター処理前")
+//        logger.info(firebaseApp.name)
+////        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+////            chain.doFilter(request, response)
+////            return
+////        }
+//        chain?.doFilter(request,response)
+//        logger.info("フィルター処理後")
+//    }
+//
+//}

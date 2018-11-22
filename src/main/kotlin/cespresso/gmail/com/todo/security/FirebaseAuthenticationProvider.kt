@@ -21,12 +21,15 @@ class FirebaseAuthenticationProvider:AbstractUserDetailsAuthenticationProvider()
         if(authentication is FirebaseAuthenticationToken){
             val task = firebaseAuth.verifyIdTokenAsync(authentication.token)
             return try{
+                println("トークンの検証")
                 val token = task.get()
                 FirebaseUserDetails(token.email,token.uid)
             }catch (e:Exception){
+                println("認証に失敗した")
                 throw SessionAuthenticationException(e.message)
             }
         }
+        println("認証に失敗した")
         throw SessionAuthenticationException("Invalid authentication class")
     }
 

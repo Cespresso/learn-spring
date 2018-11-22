@@ -19,8 +19,8 @@ class FireBaseAdmin {
             .build()
 
     val firebaseApp = FirebaseApp.initializeApp(options)
-    @Bean
-    fun fireBaseAdmin():FirebaseApp = firebaseApp
+//    @Bean
+//    fun fireBaseAdmin():FirebaseApp = firebaseApp
 
     @Bean
     fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance(firebaseApp)

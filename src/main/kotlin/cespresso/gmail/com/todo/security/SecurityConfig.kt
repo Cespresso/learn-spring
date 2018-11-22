@@ -3,11 +3,13 @@ package cespresso.gmail.com.todo.security
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.util.*
 
@@ -16,7 +18,7 @@ import java.util.*
 class SecurityConfig :WebSecurityConfigurerAdapter(){
 
     @Autowired
-    lateinit var authenticationProvider: FirebaseAuthenticationProvider
+    lateinit var authenticationProvider: AuthenticationProvider
     override fun authenticationManager(): AuthenticationManager {
         //TODO
         return ProviderManager(Arrays.asList(authenticationProvider))
@@ -29,7 +31,7 @@ class SecurityConfig :WebSecurityConfigurerAdapter(){
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/public").permitAll()
-                    .anyRequest().authenticated()
+                    .antMatchers("/user/**").authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -40,7 +42,8 @@ class SecurityConfig :WebSecurityConfigurerAdapter(){
     private fun authenticationTokenFilterBean():FirebaseAuthenticationTokenFilter {
         val authenticationTokenFilter = FirebaseAuthenticationTokenFilter()
         authenticationTokenFilter.setAuthenticationManager(authenticationManager())
-//        authenticationTokenFilter.setAuthenticationSuccessHandler((req,res,atu)->{})
+        // この処理を追加しないと
+        authenticationTokenFilter.setAuthenticationSuccessHandler({ request, response, authentication -> })
         return authenticationTokenFilter
     }
 }
