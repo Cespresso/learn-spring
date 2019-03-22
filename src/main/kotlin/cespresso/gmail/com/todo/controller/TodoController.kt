@@ -3,21 +3,60 @@ package cespresso.gmail.com.todo.controller
 import cespresso.gmail.com.todo.domain.dto.DiscordChat
 import cespresso.gmail.com.todo.domain.entity.Todos
 import cespresso.gmail.com.todo.domain.repository.TodoRepository
+import cespresso.gmail.com.todo.security.security_model.FirebaseUserDetails
+import org.springframework.data.domain.Example
 import org.springframework.http.*
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 
 
 @RestController
-@RequestMapping("/Todos")
+@RequestMapping("/todo")
 class TodoController(val repository: TodoRepository) {
 
     @GetMapping
-    fun findAll() = repository.findAll()
+    fun findAll():MutableList<Todos>?{
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userDetail = authentication.principal
+        if (userDetail is FirebaseUserDetails) {
+            println(authentication.authorities)
+//            return repository.findAllTodosByUserID(userDetail.id)
+            val example = Example.of(Todos(user_id = userDetail.id))
+            return repository.findAll(example)
+        }
+        return null
+
+    }
+    @GetMapping("/all")
+    fun findAllTodo():MutableList<Todos>?{
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userDetail = authentication.principal
+        if (userDetail is FirebaseUserDetails) {
+            println(authentication.authorities)
+            val example = Example.of(Todos(user_id = userDetail.id))
+            return try{
+                repository.findAll(example)
+            } catch (e:Exception){
+                null
+            }
+        }
+        return null
+    }
+    @GetMapping("/normal")
+    fun findAllNormal()=repository.findAll()
+
 
     @PostMapping
-    fun addCustomer(@RequestBody todos: Todos){
-        repository.save(todos)
+    fun addTodo(@RequestBody todos: Todos){
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userDetail = authentication.principal
+        if (userDetail is FirebaseUserDetails) {
+            todos.user_id = userDetail.id
+            println(todos.user_id)
+            repository.save(todos)
+        }
+
     }
 
 //    @GetMapping("/{id}/send")
