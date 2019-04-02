@@ -53,6 +53,7 @@ class TodoController(val repository: TodoRepository) {
         val userDetail = authentication.principal
         if (userDetail is FirebaseUserDetails) {
             todos.user_id = userDetail.id
+            todos.id = null
             println(todos.user_id)
             repository.save(todos)
         }
@@ -85,18 +86,37 @@ class TodoController(val repository: TodoRepository) {
 //    }
 
 
-    @PutMapping("/{id}")
-    fun updateCustomer(@PathVariable id: Long, @RequestBody todos: Todos) {
-        assert(todos.id == id)
-        repository.save(todos)
+    @PostMapping("/{id}")
+    fun updateCustomer(@PathVariable id: Long, @RequestBody todo: Todos) {
+        if(id !=todo.id){
+            // エンティティとパラメータで指定されたIDが違う
+            throw Exception("")
+        }
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userDetail = authentication.principal
+        if (userDetail is FirebaseUserDetails) {
+            val example = Example.of(Todos(id = todo.id,user_id = userDetail.id))
+            val beforeTodos = repository.findAll(example)
+            if(beforeTodos.count() != 1) throw Exception("存在しない対象の更新")
+            println(todo.user_id)
+            val beforeTodo = beforeTodos[0]
+            beforeTodo.title = todo.title
+            beforeTodo.body = todo.body
+            beforeTodo.completed = todo.completed
+            repository.save(beforeTodo)
+        }
+
     }
 
     @DeleteMapping("/{id}")
-    fun removeCustomer(@PathVariable id: Long)
-            = repository.deleteById(id)
-
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id: Long)
-            = repository.findById(id)
-
+    fun removeCustomer(@PathVariable id: Long){
+        val authentication = SecurityContextHolder.getContext().authentication
+        val userDetail = authentication.principal
+        if (userDetail is FirebaseUserDetails) {
+            val example = Example.of(Todos(id = id, user_id = userDetail.id))
+            val beforeTodos = repository.findAll(example)
+            if (beforeTodos.count() != 1) throw Exception("存在しない対象の削除")
+            repository.deleteById(id)
+        }
+    }
 }
