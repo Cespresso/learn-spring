@@ -14,7 +14,7 @@ class Todos (
     @Column(name="title")
     var title: String? = null,
     @Column(name="completed")
-    val completed:Boolean? =null,
+    var completed:Boolean? =null,
     @Column(name="body")
     var body: String? = null
 
